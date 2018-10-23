@@ -10,9 +10,12 @@ public class Game {
     
     public Keyboard keyboard;
     public Bird bird;
+    public Castle castle;
     public Background background;
+    public Background background2;
     public Ball[] balls;
-
+    public Star[] stars;
+    
     public Boolean paused;
     public Boolean gameover;
     public Boolean started;
@@ -21,18 +24,45 @@ public class Game {
     public int restartDelay;
     
     public JFrame frame;
+    
+    private Thread t;
 
     public Game (JFrame frame) {
+        score = 100;
+        
+        t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runScore();
+            }
+        });
+        t.start();
+
         keyboard = Keyboard.getInstance();
+        castle = new Castle();
         background = new Background();
+        background2 = new Background();
         
         balls = new Ball[100];
+
+        stars = new Star[100];
 
         this.frame = frame;
         
         initBalls();
+
+        initStars();
         
         restart();
+    }
+    
+    private void runScore() {
+        while(true) {
+            try {
+                Thread.sleep(1000);
+            } catch(Exception e) {}
+            score--;
+        }
     }
 
     public void update () {
@@ -64,27 +94,33 @@ public class Game {
 
             bird.update();
                 
-            score = 0;
-                
+            for(int i=0; i<100; i++) {
+                try {
+                    stars[i].update();
+
+                    if(!stars[i].ate && bird.x >= stars[i].x && bird.x <= stars[i].x + 40 && bird.y >= 386) {
+                        score += 3;
+                        stars[i].ate = true;
+                    }
+                } catch(Exception e) {}
+            }
+            
             for(int i=0; i<100; i++) {
                 balls[i].update();
                 
                 if(bird.x >= balls[i].x && bird.x <= balls[i].x + 49 && bird.y >= 386) {
                     gameover = true;
                 }
-                
-                if(balls[i].x < 0)
-                    score++;
             }
             
-            if(gameover) {
+            if(gameover || score == 0) {
                 JOptionPane.showMessageDialog(frame, "Game Over");
                 restart();
             }
 
-            if(score == 100) {
+            if(castle.x + 210 < bird.x) {
                 gameover = true;
-                JOptionPane.showMessageDialog(frame, "You passed all of the bombs!  You win.");
+                JOptionPane.showMessageDialog(frame, "You win.");
                 restart();
             }
             
@@ -101,7 +137,11 @@ public class Game {
     }
 
     public void restart () {
-        bird = new Bird();
+        score = 100;
+
+        background.x = background2.x = 0;
+        
+        bird = new Bird(background, background2, balls, stars, castle);
 
         paused = false;
         gameover = false;
@@ -111,22 +151,46 @@ public class Game {
         restartDelay = 0;
 
         initBalls();
+        
+        initStars();
     }
     
     private void initBalls() {
         Random random = new Random();
+        int max;
+        max = 0;
         for(int i=0; i<100; i++) {
             balls[i] = new Ball();
-            balls[i].x = 500 + i*100 + random.nextInt(30000);
+            balls[i].x = 500 + i * (random.nextInt(100) + 360);
+            if(balls[i].x > max) {
+                max = balls[i].x;
+            }
         }
+        castle.x = max + 200;
     }
     
+    private void initStars() {
+        Random random = new Random();
+        for(int i=0; i<100; i++) {
+            stars[i] = new Star();
+            stars[i].x = 500 + i*100 + random.nextInt(30000);
+        }
+    }
+
     public ArrayList<Render> getRenders() {
-        ArrayList<Render> renders = new ArrayList<Render>();
-        renders.add(background.getRender());
-        renders.add(bird.getRender());
-        for(int i=0; i<100; i++)
-            renders.add(balls[i].getRender());
-        return renders;
+        try {
+            ArrayList<Render> renders = new ArrayList<Render>();
+            renders.add(background.getRender());
+            renders.add(background2.getRender());
+            renders.add(bird.getRender());
+            for(int i=0; i<100; i++)
+                renders.add(balls[i].getRender());
+            for(int i=0; i<100; i++)
+                renders.add(stars[i].getRender());
+            renders.add(castle.getRender());
+            return renders;
+        } catch(Exception e) {
+            return null;
+        }
     }
 }

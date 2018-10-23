@@ -19,7 +19,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update () {
         game.update();
-        this.frame.setTitle("score: " + game.score);
+        this.frame.setTitle("life: " + game.score);
         repaint();
     }
 
@@ -28,8 +28,11 @@ public class GamePanel extends JPanel implements Runnable {
 
         g.setColor(Color.GREEN);
 
-        for (Render r : game.getRenders())
-            g.drawImage(r.image, r.x, r.y, null);
+        try {
+            for (Render r : game.getRenders()) {
+                g.drawImage(r.image, r.x, r.y, null);
+            }
+        } catch(Exception e) {e.printStackTrace();}
     }
     
     public void run () {

@@ -1,7 +1,7 @@
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 
-public class Ball {
+public class Castle {
 
     public int x;
     public int y;
@@ -9,16 +9,14 @@ public class Ball {
     public int height;
 
     private Image image;
+    
+    public boolean ate;
 
-    public Ball () {
-        x = 500;
-        y = 393 - 80 + 30 - 3;
-        width = 59;
-        height = 80;
-    }
-
-    public void update () {
-        //x -= 5;
+    public Castle () {
+        x = 0;
+        y = 0;
+        width = 300;
+        height = 260;
     }
 
     public Render getRender() {
@@ -28,7 +26,7 @@ public class Ball {
         r.y = y;
 
         if (image == null) {
-            image = Util.loadImage("lib/ball.png");     
+            image = Util.loadImage("lib/castle.png");     
         }
         r.image = image;
 

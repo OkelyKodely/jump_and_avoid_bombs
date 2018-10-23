@@ -19,4 +19,12 @@ public class Background {
 
         return r;
     }
+    
+    public void moveLeft() {
+        x -= 2;
+    }
+
+    public void moveRight() {
+        x += 2;
+    }
 }

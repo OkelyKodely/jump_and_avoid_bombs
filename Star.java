@@ -1,7 +1,7 @@
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 
-public class Ball {
+public class Star {
 
     public int x;
     public int y;
@@ -9,12 +9,14 @@ public class Ball {
     public int height;
 
     private Image image;
+    
+    public boolean ate;
 
-    public Ball () {
+    public Star () {
         x = 500;
-        y = 393 - 80 + 30 - 3;
-        width = 59;
-        height = 80;
+        y = 393 - 80 + 30 - 3 + 40;
+        width = 40;
+        height = 40;
     }
 
     public void update () {
@@ -28,7 +30,7 @@ public class Ball {
         r.y = y;
 
         if (image == null) {
-            image = Util.loadImage("lib/ball.png");     
+            image = Util.loadImage("lib/star.png");     
         }
         r.image = image;
 

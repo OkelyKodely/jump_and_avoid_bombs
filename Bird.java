@@ -17,8 +17,21 @@ public class Bird {
 
     private Image image;
     private Keyboard keyboard;
+    
+    private Background background;
+    private Background background2;
 
-    public Bird () {
+    private Ball[] balls;
+    private Star[] stars;
+    
+    private Castle castle;
+
+    public Bird (Background background, Background background2, Ball[] balls, Star[] stars, Castle castle) {
+        this.background = background;
+        this.background2 = background2;
+        this.balls = balls;
+        this.stars = stars;
+        this.castle = castle;
         x = 100;
         y = 388;
         yvel = 0;
@@ -41,10 +54,42 @@ public class Bird {
             jumpDelay = 10;
         }
         
-        if(keyboard.isDown(KeyEvent.VK_LEFT)) {
+        if(keyboard.isDown(KeyEvent.VK_LEFT) && x > 170) {
             x -= 5;
-        } else if(keyboard.isDown(KeyEvent.VK_RIGHT)) {
+        } else if(keyboard.isDown(KeyEvent.VK_RIGHT) && x < 250) {
             x += 5;
+        } else if(keyboard.isDown(KeyEvent.VK_LEFT) && x <= 170) {
+            if(background.x == 4)
+                background2.x = background.x - 500;
+            if(background2.x == -4) {
+                background.x = 0;
+                background2.x = 500;
+            }
+            background.moveRight();
+            background2.moveRight();
+            background.moveRight();
+            background2.moveRight();
+            castle.x += 10;
+            for(int i=0; i<100; i++)
+                balls[i].x += 10;
+            for(int i=0; i<100; i++)
+                stars[i].x += 10;
+        } else if(keyboard.isDown(KeyEvent.VK_RIGHT) && x >= 250) {
+            if(background.x == -4)
+                background2.x = background.x + 500;
+            if(background2.x == 4) {
+                background.x = 0;
+                background2.x = 500;
+            }
+            background.moveLeft();
+            background2.moveLeft();
+            background.moveLeft();
+            background2.moveLeft();
+            castle.x -= 10;
+            for(int i=0; i<100; i++)
+                balls[i].x -= 10;
+            for(int i=0; i<100; i++)
+                stars[i].x -= 10;
         }
 
         y += (int)yvel;
